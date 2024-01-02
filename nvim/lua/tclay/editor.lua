@@ -1,4 +1,6 @@
-vim.opt.guicursor = ""
+local system = vim.loop.os_uname().sysname
+
+vim.opt.guicursor = ''
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
@@ -12,10 +14,16 @@ vim.opt.smartindent = true
 
 vim.opt.wrap = false
 
-vim.env.PRETTIERD_DEFAULT_CONFIG = vim.fn.expand('~/.config/nvim/utils/linter-config/.prettierrc.json')
+vim.env.PRETTIERD_DEFAULT_CONFIG = vim.fn.expand '~/.config/nvim/utils/linter-config/.prettierrc.json'
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+
+if system == 'Windows_NT' then
+  vim.opt.undodir = os.getenv 'UserProfile' .. '/.vim/undodir'
+else
+  vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
+end
+
 vim.opt.undofile = true
 
 vim.opt.hlsearch = false
@@ -24,12 +32,12 @@ vim.opt.incsearch = true
 vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
-vim.opt.isfname:append("@-@")
+vim.opt.signcolumn = 'yes'
+vim.opt.isfname:append '@-@'
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "120"
+vim.opt.colorcolumn = '120'
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -62,7 +70,6 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
-
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -74,22 +81,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
-local _border = "single"
+local _border = 'single'
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-  vim.lsp.handlers.hover, {
-    border = _border
-  }
-)
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = _border,
+})
 
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  vim.lsp.handlers.signature_help, {
-    border = _border
-  }
-)
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = _border,
+})
 
-vim.diagnostic.config{
-  float={border=_border}
+vim.diagnostic.config {
+  float = { border = _border },
 }
 
 -- https://github.com/nvim-tree/nvim-tree.lua/wiki/Recipes#go-to-last-used-hidden-buffer-when-deleting-a-buffer
