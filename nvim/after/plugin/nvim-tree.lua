@@ -189,6 +189,9 @@ local WIDTH_RATIO = 0.5 -- You can change this too
 require('nvim-tree').setup {
   on_attach = my_on_attach,
   sync_root_with_cwd = true,
+  hijack_directories = {
+    auto_open = false,
+  },
   filters = {
     git_ignored = false,
     dotfiles = false,
@@ -224,3 +227,27 @@ require('nvim-tree').setup {
     end,
   },
 }
+
+-- Open as a float on directory such that switching to Telescope doesn't throw errors
+local function open_nvim_tree(data)
+  -- buffer is a directory
+  local directory = vim.fn.isdirectory(data.file) == 1
+
+  if not directory then
+    return
+  end
+
+  -- create a new, empty buffer
+  vim.cmd.enew()
+
+  -- wipe the directory buffer
+  vim.cmd.bw(data.buf)
+
+  -- change to the directory
+  vim.cmd.cd(data.file)
+
+  -- open the tree
+  require('nvim-tree.api').tree.open()
+end
+
+vim.api.nvim_create_autocmd({ 'VimEnter' }, { callback = open_nvim_tree })
