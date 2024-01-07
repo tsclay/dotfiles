@@ -35,6 +35,7 @@ require('lazy').setup({
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
+  'mfussenegger/nvim-jdtls',
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
@@ -112,6 +113,37 @@ require('lazy').setup({
     event = { 'CmdlineEnter' },
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+  },
+  {
+    'RRethy/vim-illuminate',
+    -- cmd = "IlluminateToggle",
+    -- keys = {
+    --   -- { "<leader>ti", require("illuminate").toggle(), "[T]oggle [I]lluminate" }
+    --   { "<leader>ti", "<cmd>IlluminateToggle<CR>", "[T]oggle [I]lluminate" },
+    -- },
+    opts = {
+      -- filetypes_denylist = {
+      --   "dirvish",
+      --   "fugitive",
+      --   "md",
+      --   "org",
+      --   "norg",
+      --   "NvimTree",
+      -- },
+    },
+    config = function(opts)
+      require('illuminate').configure {
+        filetypes_denylist = {
+          'fugitive',
+          'org',
+          'norg',
+          'NvimTree',
+        },
+      }
+
+      vim.keymap.set('n', '<leader>ti', '<cmd>IlluminateToggle<CR>', { desc = '[T]oggle [I]lluminate' })
+      vim.keymap.set('n', '<leader>tf', require('illuminate').toggle_freeze_buf, { desc = '[F]reeze Illuminate' })
+    end,
   },
   {
     -- have to lazy load to avoid race condition with dotenv
@@ -204,18 +236,16 @@ require('lazy').setup({
     -- require('colorbuddy').colorscheme 'cobalt2'
     -- end,
   },
+  -- {
+  --   'norcalli/nvim-colorizer.lua',
+  --   config = function()
+  --     require('colorizer').setup()
+  --   end,
+  -- },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = 'auto',
-        component_separators = { left = '', right = '' },
-        section_separators = { left = '', right = '' },
-      },
-    },
   },
   {
     'theprimeagen/harpoon',
@@ -233,8 +263,9 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim', opts = {} },
   {
     'iamcco/markdown-preview.nvim',
-    ft = 'markdown',
-    config = function()
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    ft = { 'markdown' },
+    build = function()
       vim.fn['mkdp#util#install']()
     end,
   },
@@ -275,6 +306,14 @@ require('lazy').setup({
     -- config = function()
     --   require('nvim-tree').setup {}
     -- end,
+  },
+  {
+    'folke/trouble.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {},
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
   },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
