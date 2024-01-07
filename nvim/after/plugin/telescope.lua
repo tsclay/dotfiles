@@ -28,10 +28,20 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>pf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 -- vim.keymap.set('n', '<leader>ps', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>ps', function ()
-  require('telescope.builtin').grep_string({ search = vim.fn.input("Grep > ") });
+
+vim.keymap.set('n', '<leader>ps', function()
+  require('telescope.builtin').grep_string { search = vim.fn.input 'Grep > ' }
 end)
+
+vim.keymap.set('n', '<leader>pws', function()
+  local word = vim.fn.expand '<cword>'
+  require('telescope.builtin').grep_string { search = word }
+end, { desc = 'Search project for word under cursor' })
+
+vim.keymap.set('n', '<leader>pWs', function()
+  local word = vim.fn.expand '<cWORD>'
+  require('telescope.builtin').grep_string { search = word }
+end, { desc = 'Search project for text under cursor up to next whitespace' })
+
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-
-
