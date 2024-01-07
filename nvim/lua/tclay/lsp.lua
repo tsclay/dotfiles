@@ -48,34 +48,107 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 end
+
+local function get_python_path(workspace)
+  -- Use activated virtualenv.
+  -- print('the workspace: ' .. workspace)
+  local path = require('lspconfig/util').path
+  if vim.env.VIRTUAL_ENV then
+    -- print 'Using virtualenv that was sourced'
+    return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
+  end
+
+  -- Find and use virtualenv in workspace directory.
+  for _, pattern in ipairs { '*', '.*' } do
+    local match = vim.fn.glob(path.join(workspace, pattern, 'pyvenv.cfg'))
+    -- print(match)
+    if match ~= '' then
+      -- print('the return value: ' .. path.join(path.dirname(match), 'bin', 'python'))
+      return path.join(path.dirname(match), 'bin', 'python')
+    end
+  end
+  -- Fallback to system Python.
+  return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
+end
+
+local function get_root(...)
+  -- print(...)
+  local util = require 'lspconfig/util'
+  local primary = util.root_pattern(...)
+  -- print("the primary is ", primary(vim.fn.getcwd()))
+  -- local fallback = vim.loop.cwd()
+  return primary and primary(vim.fn.getcwd()) or ''
+end
+
 local servers = {
-  pyright = {},
+  pyright = {
+    cmd = {
+      'pyright-langserver',
+      '--stdio',
+    },
+    settings = {
+      python = {
+        pythonPath = get_python_path(get_root('pyvenv.cfg', 'venv', '.git', 'requirements.txt')),
+      },
+    },
+  },
   jsonls = {},
   tsserver = {
     filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
     cmd = { 'typescript-language-server', '--stdio' },
     -- root_dir = function(fname)
-      -- local primary = require('lspconfig.util').root_pattern('tsconfig.json', '.git')
-      -- print(primary and primary())
-      -- local fallback = vim.loop.cwd()
-      -- print(fallback)
-      -- return primary and primary() or fallback
+    -- local primary = require('lspconfig.util').root_pattern('tsconfig.json', '.git')
+    -- print(primary and primary())
+    -- local fallback = vim.loop.cwd()
+    -- print(fallback)
+    -- return primary and primary() or fallback
     -- end,
   },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   cssls = {},
 
   lua_ls = {
-    Lua = {
-      diagnostics = {
-        globals = { 'vim' },
-      },
-      workspace = {
-        checkThirdParty = false,
-        library = vim.api.nvim_get_runtime_file('', true),
-      },
-      telemetry = { enable = false },
-    },
+    on_init = function(client)
+      local path = client.workspace_folders[1].name
+      if not vim.loop.fs_stat(path .. '/.luarc.json') and not vim.loop.fs_stat(path .. '/.luarc.jsonc') then
+        client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+          Lua = {
+            diagnostics = {
+              globals = { 'vim' },
+            },
+            runtime = {
+              -- Tell the language server which version of Lua you're using
+              -- (most likely LuaJIT in the case of Neovim)
+              version = 'LuaJIT',
+            },
+            -- Make the server aware of Neovim runtime files
+            workspace = {
+              checkThirdParty = false,
+              library = {
+                vim.env.VIMRUNTIME,
+                -- "${3rd}/luv/library"
+                -- "${3rd}/busted/library",
+              },
+              -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
+              -- library = vim.api.nvim_get_runtime_file("", true)
+              telemetry = { enable = false },
+            },
+          },
+        })
+        client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      end
+      return true
+    end,
+    -- Lua = {
+    --   diagnostics = {
+    --     globals = { 'vim' },
+    --   },
+    --   workspace = {
+    --     checkThirdParty = false,
+    --     library = vim.api.nvim_get_runtime_file('', true),
+    --   },
+    --   telemetry = { enable = false },
+    -- },
   },
 }
 -- local attach_overrides = {
@@ -103,9 +176,10 @@ mason_lspconfig.setup {
 mason_lspconfig.setup_handlers {
   function(server_name)
     require('lspconfig')[server_name].setup {
+      on_init = (servers[server_name] or {}).on_init,
       capabilities = capabilities,
       on_attach = on_attach,
-      settings = servers[server_name],
+      settings = (servers[server_name] or {}).settings,
       filetypes = (servers[server_name] or {}).filetypes,
       cmd = (servers[server_name] or {}).cmd,
       root_dir = (servers[server_name] or {}).root_dir,
