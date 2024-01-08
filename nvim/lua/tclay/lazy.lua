@@ -37,6 +37,38 @@ require('lazy').setup({
   --  The configuration is done below. Search for lspconfig to find it below.
   'mfussenegger/nvim-jdtls',
   {
+    'mfussenegger/nvim-dap-python',
+    build = function()
+      local home
+      -- presumes python is on the path
+      local py_exe = vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
+      if vim.fn.has 'win32' == 1 then
+        home = os.getenv 'UserProfile'
+      else
+        home = os.getenv 'HOME'
+      end
+      if vim.fn.isdirectory(home .. '/.virtualenvs') == 0 then
+        vim.fn.mkdir(home .. '/.virtualenvs')
+      end
+      if vim.fn.isdirectory(home .. '/.virtualenvs/debugpy') == 0 then
+        -- TODO: Have to find global python exe depending on OS
+        vim.fn.system { py_exe, '-m', 'venv', home .. '/.virtualenvs/debugpy' }
+        vim.fn.system { home .. '/.virtualenvs/debugpy/bin/python', '-m', 'pip', 'install', 'debugpy' }
+      else
+        vim.fn.system { home .. '/.virtualenvs/debugpy/bin/python', '-m', 'pip', 'install', 'debugpy', '-U' }
+      end
+    end,
+    config = function()
+      local home
+      if vim.fn.has 'win32' == 1 then
+        home = os.getenv 'UserProfile'
+      else
+        home = os.getenv 'HOME'
+      end
+      require('dap-python').setup(home .. '/.virtualenvs/debugpy/bin/python')
+    end,
+  },
+  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
     dependencies = {
@@ -49,12 +81,7 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true }, -- Optional
       { 'williamboman/mason-lspconfig.nvim' }, -- Optional
       { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
-      {
-        'folke/neodev.nvim',
-        init = function()
-          require('neodev').setup()
-        end,
-      },
+      'folke/neodev.nvim',
       {
         -- Autocompletion
         'hrsh7th/nvim-cmp',
@@ -71,7 +98,6 @@ require('lazy').setup({
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
     },
   },
-
   {
     -- NOTE: Yes, you can install new plugins here!
     'mfussenegger/nvim-dap',
