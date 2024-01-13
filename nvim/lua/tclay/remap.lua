@@ -18,7 +18,6 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 -- Tree toggle cmd has to go here
 vim.keymap.set('n', '<leader>pv', ':NvimTreeToggle<CR>', { silent = true, noremap = true })
-vim.keymap.set('n', '<leader>cb', vim.cmd.bdelete)
 -- vim.keymap.set('n', '<leader>f', ':FormatWrite<CR>', { silent = true, noremap = true }) --use formatter.nvim
 
 -- Move highlighted chunks up and down, auto-tabbing when appropriate
@@ -60,5 +59,4 @@ vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true, desc =
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
