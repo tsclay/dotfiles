@@ -16,18 +16,6 @@
 --     end,
 --   })
 -- end
-local function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
 
 local on_attach = function(_, bufnr)
   local nmap = function(keys, func, desc)
@@ -61,36 +49,7 @@ local on_attach = function(_, bufnr)
   end, '[W]orkspace [L]ist Folders')
 end
 
-local function get_python_path(workspace)
-  -- Use activated virtualenv.
-  -- print('the workspace: ' .. workspace)
-  local path = require('lspconfig/util').path
-  if vim.env.VIRTUAL_ENV then
-    -- print 'Using virtualenv that was sourced'
-    return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
-  end
-
-  -- Find and use virtualenv in workspace directory.
-  for _, pattern in ipairs { '*', '.*' } do
-    local match = vim.fn.glob(path.join(workspace, pattern, 'pyvenv.cfg'))
-    -- print(match)
-    if match ~= '' then
-      -- print('the return value: ' .. path.join(path.dirname(match), 'bin', 'python'))
-      return path.join(path.dirname(match), 'bin', 'python')
-    end
-  end
-  -- Fallback to system Python.
-  return vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
-end
-
-local function get_root(...)
-  -- print(...)
-  local util = require 'lspconfig/util'
-  local primary = util.root_pattern(...)
-  -- print("the primary is ", primary(vim.fn.getcwd()))
-  -- local fallback = vim.loop.cwd()
-  return primary and primary(vim.fn.getcwd()) or ''
-end
+local get_python_path = require('tclay.utils').get_python_path
 
 local servers = {
   pyright = {
@@ -100,7 +59,10 @@ local servers = {
     },
     settings = {
       python = {
-        pythonPath = get_python_path(get_root('pyvenv.cfg', 'venv', '.git', 'requirements.txt')),
+        analysis = {
+          typeCheckingMode = 'off',
+        },
+        pythonPath = get_python_path(),
       },
     },
   },

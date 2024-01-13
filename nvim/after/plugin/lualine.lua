@@ -1,16 +1,20 @@
 local function split(input, delimiter)
   local arr = {}
-  string.gsub(input, '[^' .. delimiter .. ']+', function(w)
+  local d = string.gsub(input, '[^' .. delimiter .. ']+', function(w)
     table.insert(arr, w)
   end)
   return arr
 end
 
 local function get_venv()
-  local venv = vim.env.VIRTUAL_ENV
+  local t = vim.fn.system[[rg --files --type python]]
+  if t == '' then
+    return ''
+  end
+  local venv = require('tclay.utils').get_python_path()
   if venv then
-    local params = split(venv, '/')
-    return '(env:' .. params[table.getn(params) - 1] .. ')'
+    local params = split(venv, '/\\')
+    return '(env:' .. params[#params - 1] .. ')'
   else
     return ''
   end
