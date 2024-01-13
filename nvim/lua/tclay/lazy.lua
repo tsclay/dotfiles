@@ -25,7 +25,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
-
+  {
+    'Joakker/lua-json5',
+    build = function()
+      vim.fn.system './install.sh'
+    end,
+  },
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
@@ -35,17 +40,23 @@ require('lazy').setup({
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
+  'mfussenegger/nvim-lint',
   'mfussenegger/nvim-jdtls',
   {
     'mfussenegger/nvim-dap-python',
     build = function()
       local home
+      local venv_py
+      local py_exe
       -- presumes python is on the path
-      local py_exe = vim.fn.exepath 'python3' or vim.fn.exepath 'python' or 'python'
       if vim.fn.has 'win32' == 1 then
         home = os.getenv 'UserProfile'
+        py_exe = vim.fn.exepath 'python.exe'
+        venv_py = home .. '/.virtualenvs/debugpy/Scripts/python.exe'
       else
         home = os.getenv 'HOME'
+        py_exe = vim.fn.exepath 'python3'
+        venv_py = home .. '/.virtualenvs/debugpy/bin/python'
       end
       if vim.fn.isdirectory(home .. '/.virtualenvs') == 0 then
         vim.fn.mkdir(home .. '/.virtualenvs')
@@ -53,19 +64,19 @@ require('lazy').setup({
       if vim.fn.isdirectory(home .. '/.virtualenvs/debugpy') == 0 then
         -- TODO: Have to find global python exe depending on OS
         vim.fn.system { py_exe, '-m', 'venv', home .. '/.virtualenvs/debugpy' }
-        vim.fn.system { home .. '/.virtualenvs/debugpy/bin/python', '-m', 'pip', 'install', 'debugpy' }
+        vim.fn.system { venv_py, '-m', 'pip', 'install', 'debugpy' }
       else
-        vim.fn.system { home .. '/.virtualenvs/debugpy/bin/python', '-m', 'pip', 'install', 'debugpy', '-U' }
+        vim.fn.system { venv_py, '-m', 'pip', 'install', 'debugpy', '-U' }
       end
     end,
     config = function()
-      local home
+      local debugpy_path
       if vim.fn.has 'win32' == 1 then
-        home = os.getenv 'UserProfile'
+        debugpy_path = os.getenv 'UserProfile' .. '/.virtualenvs/debugpy/Scripts/python.exe'
       else
-        home = os.getenv 'HOME'
+        debugpy_path = os.getenv 'HOME' .. '/.virtualenvs/debugpy/bin/python'
       end
-      require('dap-python').setup(home .. '/.virtualenvs/debugpy/bin/python')
+      require('dap-python').setup(debugpy_path)
     end,
   },
   {
