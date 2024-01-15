@@ -81,6 +81,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- Don't want files showing as changed because of line endings
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    if vim.api.nvim_buf_get_option(0, 'modifiable') == true then
+      vim.cmd [[set fileformat=unix]]
+    end
+  end,
+})
+
 local _border = 'single'
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
