@@ -1,20 +1,27 @@
-local function split(input, delimiter)
-  local arr = {}
-  local d = string.gsub(input, '[^' .. delimiter .. ']+', function(w)
-    table.insert(arr, w)
-  end)
-  return arr
-end
+-- local function split(input, delimiter)
+--   local arr = {}
+--   local d = string.gsub(input, '[^' .. delimiter .. ']+', function(w)
+--     table.insert(arr, w)
+--   end)
+--   return arr, d
+-- end
 
 local function get_venv()
-  local t = vim.fn.system[[rg --files --type python]]
+  local t = vim.fn.system [[rg --files --type python]]
   if t == '' then
     return ''
   end
   local venv = require('tclay.utils').get_python_path()
   if venv then
-    local params = split(venv, '/\\')
-    return '(env:' .. params[#params - 1] .. ')'
+    local version = vim.fn.system { venv, '--version' }
+    version = version:gsub('[^A-Za-z0-9. ]+', '')
+    local path_str = require('tclay.utils').dirname(venv)
+    if path_str ~= nil then
+      path_str = path_str:gsub('[\\/]$', '')
+    end
+    -- local params, path_str = split(venv, '/\\')
+    -- return 'env:' .. params[#params - 1] .. ')'
+    return version .. ' (' .. path_str .. ')'
   else
     return ''
   end
