@@ -40,17 +40,59 @@ local settings = {
       }
     end,
   },
-  css = {
-    function ()
+  javascriptreact = {
+    -- prettierd
+    function()
       return {
         exe = 'prettierd',
         args = { vim.api.nvim_buf_get_name(0) },
         stdin = true,
       }
-    end
+    end,
+  },
+  typescript = {
+    -- prettierd
+    function()
+      return {
+        exe = 'prettierd',
+        args = { vim.api.nvim_buf_get_name(0) },
+        stdin = true,
+      }
+    end,
+  },
+  typescriptreact = {
+    -- prettierd
+    function()
+      return {
+        exe = 'prettierd',
+        args = { vim.api.nvim_buf_get_name(0) },
+        stdin = true,
+      }
+    end,
+  },
+  css = {
+    function()
+      return {
+        exe = 'prettierd',
+        args = { vim.api.nvim_buf_get_name(0) },
+        stdin = true,
+      }
+    end,
+  },
+  html = {
+    function()
+      return {
+        exe = 'prettierd',
+        args = { vim.api.nvim_buf_get_name(0) },
+        stdin = true,
+      }
+    end,
   },
   go = {
     require('formatter.filetypes.go').gofmt,
+  },
+  python = {
+    require('formatter.filetypes.python').black,
   },
   -- Use the special "*" filetype for defining formatter configurations on
   -- any filetype
@@ -76,4 +118,4 @@ vim.keymap.set('n', '<leader>f', function()
   else
     vim.lsp.buf.format()
   end
-end, {desc = "Format file"})
+end, { desc = 'Format file' })
