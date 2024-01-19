@@ -85,7 +85,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_create_autocmd('BufEnter', {
   callback = function()
     if vim.api.nvim_buf_get_option(0, 'modifiable') == true then
-      vim.cmd [[set fileformat=unix]]
+      vim.cmd [[set fileformat=unix|update]]
     end
   end,
 })

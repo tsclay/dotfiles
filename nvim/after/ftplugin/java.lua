@@ -56,10 +56,10 @@ end
 local on_attach = function(client, bufnr)
   -- Regular Neovim LSP client keymappings
   local bufopts = { noremap = true, silent = true, buffer = bufnr }
-  nnoremap('gD', vim.lsp.buf.declaration, bufopts, "Go to declaration")
-  nnoremap('gd', vim.lsp.buf.definition, bufopts, "Go to definition")
-  nnoremap('gi', vim.lsp.buf.implementation, bufopts, "Go to implementation")
-  nnoremap('K', vim.lsp.buf.hover, bufopts, "Hover text")
+  nnoremap('gD', vim.lsp.buf.declaration, bufopts, 'Go to declaration')
+  nnoremap('gd', vim.lsp.buf.definition, bufopts, 'Go to definition')
+  nnoremap('gi', vim.lsp.buf.implementation, bufopts, 'Go to implementation')
+  nnoremap('K', vim.lsp.buf.hover, bufopts, 'Hover text')
   nnoremap('<C-k>', vim.lsp.buf.signature_help, bufopts, 'Show signature')
   nnoremap('<space>wa', vim.lsp.buf.add_workspace_folder, bufopts, 'Add workspace folder')
   nnoremap('<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts, 'Remove workspace folder')
@@ -216,16 +216,20 @@ local config = {
 }
 
 local function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
+  if type(o) == 'table' then
+    local s = '{ '
+    for k, v in pairs(o) do
+      if type(k) ~= 'number' then
+        k = '"' .. k .. '"'
       end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
+      s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+    end
+    print(s .. '} ')
+    return s .. '} '
+  else
+    print(o)
+    return tostring(o)
+  end
 end
 
 -- require('dap.ext.vscode').load_launchjs()
