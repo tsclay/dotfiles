@@ -22,6 +22,7 @@ if system == 'Windows_NT' then
   workspace_folder = home .. 'AppData/Local/Eclipse/' .. vim.fn.fnamemodify(root_dir, ':p:h:t')
   bundles = {
     vim.fn.glob(home .. '/AppData/Local/nvim-data/com.microsoft.java.debug.plugin-*.jar'),
+    vim.fn.glob(home .. '/AppData/Local/nvim-data/com.microsoft.jdtls.ext.core-*.jar')
   }
   JDK_PATH = 'C:/Program Files/'
   JAR = vim.fn.glob(home .. '/AppData/Local/nvim-data/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar')
@@ -31,6 +32,8 @@ else
   workspace_folder = home .. '/.eclipse/' .. vim.fn.fnamemodify(root_dir, ':p:h:t')
   bundles = {
     vim.fn.glob(home .. '/.local/share/nvim/com.microsoft.java.debug.plugin-*.jar'),
+    vim.fn.glob(home .. '/.local/share/nvim/com.microsoft.jdtls.ext.core-*.jar'),
+    vim.fn.glob(home .. '/.local/share/nvim/pde/*.jar')
   }
   JDK_PATH = '/usr/lib/jvm/openjdk/21.0.1'
   JAR = vim.fn.glob(home .. '/.local/share/nvim/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar')
@@ -171,6 +174,10 @@ local config = {
           --   name = "JavaSE-11",
           --   path = "C:/Program Files/Amazon Corretto/jdk11.0.18_10",
           -- },
+          {
+            name = "JavaSE-11",
+            path = "/usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home",
+          },
           {
             name = 'JavaSE-21',
             path = '/usr/local/Cellar/openjdk/21.0.1',
