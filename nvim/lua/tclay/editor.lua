@@ -82,13 +82,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Don't want files showing as changed because of line endings
-vim.api.nvim_create_autocmd('BufEnter', {
-  callback = function()
-    if vim.api.nvim_buf_get_option(0, 'modifiable') == true then
-      vim.cmd [[set fileformat=unix|update]]
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd('BufEnter', {
+--   callback = function()
+--     if vim.api.nvim_buf_get_option(0, 'modifiable') == true then
+--       vim.cmd [[set fileformat=unix|update]]
+--     end
+--   end,
+-- })
 
 local _border = 'single'
 
