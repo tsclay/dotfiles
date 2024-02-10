@@ -18,3 +18,6 @@ export PNPM_HOME="/Users/timclay/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 export PATH="/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk/Contents/Home/bin:$PATH"
+# export LUA_CPATH="./?.so;/usr/local/lib/lua/5.4/?.so;/usr/local/share/lua/5.4/?.so;./?.dylib"
+export LUA_CPATH="$LUA_CPATH;$HOME/.local/share/nvim/lazy/lua-json5/lua/json5.dylib"
+export JAVA_HOME="/usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home"
