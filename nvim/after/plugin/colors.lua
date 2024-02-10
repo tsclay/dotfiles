@@ -34,3 +34,4 @@ end, { nargs = 1, complete = 'color' })
 -- if vim.api.nvim_command ':colorscheme' == nil or vim.api.nvim_command ':colorscheme' == 'default' then
 --   vim.api.nvim_command ':colorscheme noctis_azureus'
 -- end
+-- adsfasdfasdf
