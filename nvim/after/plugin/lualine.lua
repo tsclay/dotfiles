@@ -6,9 +6,15 @@
 --   return arr, d
 -- end
 
+local t = ''
 local function get_venv()
-  local t = vim.fn.system [[rg --files --type python]]
-  if t == '' then
+  -- if vim.fn.getcwd() ~= os.getenv('HOME') then
+  --   local t = vim.fn.system [[rg --files --type python]]
+  -- end
+  -- if t == '' then
+  --   return ''
+  -- end
+  if next(vim.lsp.get_active_clients { name = 'pyright' }) == nil then
     return ''
   end
   local venv = require('tclay.utils').get_python_path()
