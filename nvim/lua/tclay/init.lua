@@ -1,6 +1,6 @@
-require("tclay.remap")
-require("tclay.editor")
-require("tclay.lazy")
-require("tclay.lsp")
-require("tclay.debug")
-
+require 'tclay.remap'
+require 'tclay.editor'
+require 'tclay.lazy'
+require 'tclay.colors'
+require 'tclay.lsp'
+require 'tclay.debug'
