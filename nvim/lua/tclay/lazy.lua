@@ -31,6 +31,10 @@ require('lazy').setup({
       vim.fn.system './install.sh'
     end,
   },
+  {
+    'stevearc/oil.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
@@ -91,7 +95,7 @@ require('lazy').setup({
       { 'neovim/nvim-lspconfig' }, -- Required
       { 'williamboman/mason.nvim', config = true }, -- Optional
       { 'williamboman/mason-lspconfig.nvim' }, -- Optional
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = { window = { blend = 0 } } },
       'folke/neodev.nvim',
       {
         -- Autocompletion
@@ -107,6 +111,9 @@ require('lazy').setup({
       }, -- Required
       -- Adds LSP completion capabilities
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
+      { 'hrsh7th/vim-vsnip', dependencies = {
+        'hrsh7th/vim-vsnip-integ',
+      } },
     },
   },
   {
@@ -254,16 +261,16 @@ require('lazy').setup({
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     priority = 0,
-    lazy = true,
+    -- lazy = true,
   },
   {
     'talha-akram/noctis.nvim',
-    lazy = true,
-    init = function()
-      vim.cmd 'colorscheme noctis_azureus'
-      -- needed for transparent.nvim so that colorscheme is correctly set on toggles
-      vim.g.colors_name = 'noctis_azureus'
-    end,
+    -- lazy = true,
+    -- init = function()
+    --   vim.cmd 'colorscheme noctis_azureus'
+    --   -- needed for transparent.nvim so that colorscheme is correctly set on toggles
+    --   vim.g.colors_name = 'noctis_azureus'
+    -- end,
   },
   {
     'lalitmee/cobalt2.nvim',
