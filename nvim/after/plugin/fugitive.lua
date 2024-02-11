@@ -3,8 +3,7 @@ vim.keymap.set("n", "<leader>gs", "<cmd>:tab Git<CR>", { desc = 'Open Git status
 
 local my_fugitive = vim.api.nvim_create_augroup("my_fugitive", {})
 
-local autocmd = vim.api.nvim_create_autocmd
-autocmd("BufWinEnter", {
+vim.api.nvim_create_autocmd("BufWinEnter", {
     group = my_fugitive,
     pattern = "*",
     callback = function()
@@ -22,7 +21,7 @@ autocmd("BufWinEnter", {
         -- rebase always
         opts.desc = "git pull --rebase"
         vim.keymap.set("n", "<leader>gP", function()
-            vim.cmd.Git({'pull',  '--rebase'})
+            vim.cmd.Git('pull --rebase')
         end, opts)
 
         -- NOTE: It allows me to easily set the branch i am pushing and any tracking
