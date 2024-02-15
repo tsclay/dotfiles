@@ -1,6 +1,4 @@
-require 'tclay.remap'
+require 'tclay.keymaps'
 require 'tclay.editor'
 require 'tclay.lazy'
 require 'tclay.colors'
-require 'tclay.lsp'
-require 'tclay.debug'

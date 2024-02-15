@@ -1,14 +1,5 @@
-local M = {}
+-- local M = {}
 
-local whichkey = require 'which-key'
-
-local conf = {
-  window = {
-    border = 'single', -- none, single, double, shadow
-    position = 'bottom', -- bottom, top
-  },
-}
-whichkey.setup(conf)
 
 local opts = {
   mode = 'n', -- Normal mode
@@ -28,7 +19,38 @@ local v_opts = {
   nowait = false, -- use `nowait` when creating keymaps
 }
 
-local function normal_keymap()
+-- local function normal_keymap()
+--   local keymap = {
+--
+--     -- Database
+--     D = {
+--       name = 'Database',
+--       u = { '<Cmd>DBUIToggle<Cr>', 'Toggle UI' },
+--       f = { '<Cmd>DBUIFindBuffer<Cr>', 'Find buffer' },
+--       r = { '<Cmd>DBUIRenameBuffer<Cr>', 'Rename buffer' },
+--       q = { '<Cmd>DBUILastQueryInfo<Cr>', 'Last query info' },
+--       h = { '<Cmd>DBUIHideNotifications<Cr>', 'Hide notifications'}
+--     },
+--   }
+--   whichkey.register(keymap, opts)
+-- end
+--
+-- function M.setup()
+--   normal_keymap()
+-- end
+
+return {
+  { 'folke/which-key.nvim', opts = {}, config = function()
+
+local whichkey = require 'which-key'
+
+local conf = {
+  window = {
+    border = 'single', -- none, single, double, shadow
+    position = 'bottom', -- bottom, top
+  },
+}
+whichkey.setup(conf)
   local keymap = {
 
     -- Database
@@ -42,10 +64,5 @@ local function normal_keymap()
     },
   }
   whichkey.register(keymap, opts)
-end
-
-function M.setup()
-  normal_keymap()
-end
-
-return M
+  end},
+}

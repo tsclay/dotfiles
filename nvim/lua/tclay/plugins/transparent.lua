@@ -1,3 +1,10 @@
+return {
+
+  {
+    -- transparency set manually then cached on subsequent openings of nvim
+    'xiyaowong/transparent.nvim',
+    lazy = false,
+    config = function()
 require('transparent').setup {
   groups = { -- table: default groups
     'Normal',
@@ -46,3 +53,7 @@ vim.api.nvim_command 'set shortmess=I'
 -- if state == "true" then
 --   vim.cmd[[:TransparentEnable]]
 -- end
+
+    end
+  },
+}

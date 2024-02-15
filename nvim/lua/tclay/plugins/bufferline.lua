@@ -1,7 +1,11 @@
-local status, bufferline = pcall(require, "bufferline")
-if (not status) then return end
+-- local status, bufferline = pcall(require, "bufferline")
+-- if (not status) then return end
+--
+return {
 
-bufferline.setup({
+  { 'akinsho/bufferline.nvim', version = '*', dependencies = 'nvim-tree/nvim-web-devicons',
+  config = function()
+require('bufferline').setup({
   options = {
     mode = "tabs",
     separator_style = 'slant',
@@ -43,3 +47,6 @@ bufferline.setup({
 
 vim.keymap.set('n', '<Tab>', '<Cmd>BufferLineCycleNext<CR>', {})
 vim.keymap.set('n', '<S-Tab>', '<Cmd>BufferLineCyclePrev<CR>', {})
+    end},
+}
+

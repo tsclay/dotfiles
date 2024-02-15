@@ -2,6 +2,7 @@ local cdpwd = vim.api.nvim_create_augroup('cdpwd', { clear = true})
 vim.api.nvim_create_autocmd('VimEnter', {
   group = cdpwd,
   callback = function (data)
+    print('running vimenter callback')
     local dir = string.match(data.file, "^[a-z]+://(.+)$")
     if dir ~= nil then
       vim.api.nvim_set_current_dir(dir)

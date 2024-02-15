@@ -1,3 +1,8 @@
+
+return {
+  {
+    'mhartington/formatter.nvim',
+    config = function()
 -- Utilities for creating configurations
 local util = require 'formatter.util'
 local settings = {
@@ -112,20 +117,23 @@ local settings = {
     require('formatter.filetypes.any').remove_trailing_whitespace,
   },
 }
--- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
-require('formatter').setup {
-  -- Enable or disable logging
-  logging = true,
-  -- Set the log level
-  log_level = vim.log.levels.WARN,
-  -- All formatter configurations are opt-in
-  filetype = settings,
+      -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+      require('formatter').setup {
+        -- Enable or disable logging
+        logging = true,
+        -- Set the log level
+        log_level = vim.log.levels.WARN,
+        -- All formatter configurations are opt-in
+        filetype = settings,
+      }
+      -- https://github.com/mhartington/formatter.nvim/issues/260#issuecomment-1646573031
+      vim.keymap.set('n', '<leader>f', function()
+        if settings[vim.bo.filetype] ~= nil then
+          vim.cmd [[Format]]
+        else
+          vim.lsp.buf.format()
+        end
+      end, { desc = 'Format file' })
+    end,
+  },
 }
--- https://github.com/mhartington/formatter.nvim/issues/260#issuecomment-1646573031
-vim.keymap.set('n', '<leader>f', function()
-  if settings[vim.bo.filetype] ~= nil then
-    vim.cmd [[Format]]
-  else
-    vim.lsp.buf.format()
-  end
-end, { desc = 'Format file' })
