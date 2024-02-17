@@ -11,7 +11,7 @@ return {
     'mfussenegger/nvim-lint',
     config = function()
       local lint = require 'lint'
-      print('inside lint.lua')
+      -- print('inside lint.lua')
       local py_exe = require('tclay.utils').get_python_path()
 
       local mypy = lint.linters.mypy

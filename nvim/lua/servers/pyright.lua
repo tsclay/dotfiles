@@ -1,5 +1,3 @@
-print('from pyright file ')
-
 return {
   cmd = {
     'pyright-langserver',
