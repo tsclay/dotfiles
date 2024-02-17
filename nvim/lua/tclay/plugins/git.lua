@@ -27,7 +27,10 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
     -- NOTE: It allows me to easily set the branch i am pushing and any tracking
     -- needed if i did not set the branch up correctly
     opts.desc = 'git push -u origin'
-    vim.keymap.set('n', '<leader>t', ':Git push -u origin ', opts)
+    vim.keymap.set('n', '<leader>t', ':Git push -u origin<CR>', opts)
+
+    opts.desc = 'Undo commit'
+    vim.keymap.set('n', '<leader>gC', ':Git reset --soft HEAD~<CR>', opts)
   end,
 })
 
