@@ -85,6 +85,7 @@ return {
         --   end
         -- }
         formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
           expandable_indicator = true,
           format = lspkind.cmp_format {
             mode = 'symbol_text', -- show only symbol annotations
