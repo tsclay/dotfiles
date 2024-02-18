@@ -1,9 +1,9 @@
 -- Setup neovim lua configuration
 require('neodev').setup {
-  override = function(root_dir, library)
-    library.enabled = true
-    library.plugins = true
-  end,
+  -- override = function(root_dir, library)
+  --   library.enabled = true
+  --   library.plugins = true
+  -- end,
 }
 
 return {
