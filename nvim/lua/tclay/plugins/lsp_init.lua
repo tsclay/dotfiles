@@ -4,7 +4,6 @@ return {
       dependencies = {
         { 'williamboman/mason.nvim', config = true }, -- Optional
         { 'williamboman/mason-lspconfig.nvim' }, -- Optional
-        { 'hrsh7th/cmp-buffer' },
         { 'folke/neodev.nvim' },
         { 'hrsh7th/nvim-cmp' },
         -- Snippet Engine & its associated nvim-cmp source

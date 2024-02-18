@@ -41,7 +41,7 @@ require('transparent').setup {
   exclude_groups = {}, -- table: groups you don't want to clear
 }
 
-vim.api.nvim_command 'set shortmess=I'
+vim.api.nvim_command 'set shortmess+=I'
 
 -- local state = "false"
 -- local cache = assert(io.open(vim.fn.stdpath('data') .. '/transparent_cache'), 'r')

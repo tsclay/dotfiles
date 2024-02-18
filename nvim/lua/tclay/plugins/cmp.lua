@@ -3,18 +3,15 @@ return {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
-      -- Snippet Engine & its associated nvim-cmp source
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
-
-      -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
-
-      -- Adds LSP completion capabilities
-      { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-      { 'hrsh7th/vim-vsnip', dependencies = {
-        'hrsh7th/vim-vsnip-integ',
-      } },
+      'onsails/lspkind.nvim',
+      'hrsh7th/vim-vsnip-integ',
+      'hrsh7th/vim-vsnip',
     },
     config = function()
       -- [[ Configure nvim-cmp ]]
@@ -51,6 +48,10 @@ return {
             luasnip.lsp_expand(args.body)
           end,
         },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
         mapping = cmp.mapping.preset.insert {
           ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Select },
           ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Select },
@@ -65,8 +66,9 @@ return {
         },
         sources = {
           { name = 'nvim_lsp' },
-          { name = 'buffer' },
           { name = 'luasnip' },
+          { name = 'path' },
+          { name = 'buffer' },
         },
         -- formatting = {
         --   format = function(entry, vim_item)
@@ -83,7 +85,7 @@ return {
         -- }
         formatting = {
           expandable_indicator = true,
-          format = require('lspkind').cmp_format {
+          format = lspkind.cmp_format {
             mode = 'symbol_text', -- show only symbol annotations
             maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
             ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
