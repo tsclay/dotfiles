@@ -1,11 +1,3 @@
--- Setup neovim lua configuration
-require('neodev').setup {
-  -- override = function(root_dir, library)
-  --   library.enabled = true
-  --   library.plugins = true
-  -- end,
-}
-
 return {
   --   on_init = function(client)
   --     local path = client.workspace_folders[1].name
