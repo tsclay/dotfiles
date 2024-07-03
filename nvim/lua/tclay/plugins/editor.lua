@@ -66,5 +66,11 @@ return {
     build = function()
       vim.fn['mkdp#util#install']()
     end,
+    init = function()
+      -- Open Markdown Preview when entering a .md file
+      -- vim.g.mkdp_auto_start = 1
+      -- Don't close the preview when moving away from .md buffer
+      vim.g.mkdp_auto_close = 0
+    end,
   },
 }
