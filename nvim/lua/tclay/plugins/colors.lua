@@ -10,6 +10,7 @@ return {
       require('noctis_theme').setup({
         NormalBold = { fg = 'blue', bg = 'none', bold = true },
         NormalItalic = { fg = 'blue', bg = 'none', italic = true },
+        -- NormalItalic = { link = 'PurpleItalic' },
       }, {
         ['@markup.underline'] = { link = 'Underlined' },
         ['@markup.italic'] = { link = 'NormalItalic' },
@@ -25,13 +26,25 @@ return {
   },
   {
     'lalitmee/cobalt2.nvim',
-    event = { 'ColorSchemePre' }, -- if you want to lazy load
+    -- event = { 'ColorSchemePre' }, -- if you want to lazy load
     dependencies = { lazy = true, 'tjdevries/colorbuddy.nvim' },
     -- init = function()
     -- require('colorbuddy').colorscheme 'cobalt2'
     -- end,
   },
   { 'catppuccin/nvim', name = 'catppuccin' },
+  {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  {
+    'craftzdog/solarized-osaka.nvim',
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
 }
 -- if vim.api.nvim_command ':colorscheme' == nil or vim.api.nvim_command ':colorscheme' == 'default' then
 --   vim.api.nvim_command ':colorscheme noctis_azureus'

@@ -15,7 +15,7 @@ function SetColorScheme(color)
     -- Clear all highlighting stuff first then unload the colorbuddy color
     -- Unset transparent_enabled if it's set
     vim.cmd 'hi clear'
-    vim.g.transparent_enabled = false
+    -- vim.g.transparent_enabled = false
     package.loaded[color] = nil
     -- Borrowed from colorbuddy code to reload the colorscheme
     vim.api.nvim_command 'set termguicolors'
@@ -25,11 +25,26 @@ function SetColorScheme(color)
   local set_theme = assert(io.open(vim.fn.stdpath 'data' .. '/colorscheme.cache', 'w'))
   set_theme:write(color)
   set_theme:close()
+  if not pcall(require, 'transparent') then
+    return
+  end
+  local transparent_cache = assert(io.open(vim.fn.stdpath 'data' .. '/transparent_cache', 'r'))
+  ---@type string
+  local transparent_status = transparent_cache:read '*a'
+  if string.match(transparent_status, 'true') then
+    vim.cmd [[:TransparentEnable]]
+  else
+    vim.cmd [[:TransparentDisable]]
+  end
 end
 
 vim.api.nvim_create_user_command('Theme', function(opts)
+  if #opts.fargs == 0 then
+    print(vim.cmd [[:colorscheme]])
+    return
+  end
   SetColorScheme(opts.fargs[1])
-end, { nargs = 1, complete = 'color' })
+end, { nargs = '*', complete = 'color' })
 
 vim.api.nvim_create_user_command('ColorMyPencils', function(opts)
   ColorMyPencils(opts.fargs[1])
