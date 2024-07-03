@@ -42,6 +42,10 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+vim.api.nvim_create_user_command('ReloadEnv', function()
+  find_db_env()
+end, {})
+
 return {
   {
     -- have to lazy load to avoid race condition with dotenv
