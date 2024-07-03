@@ -1,10 +1,4 @@
-local system = vim.loop.os_uname().sysname
-local home
-local workspace_folder
-local bundles
-local JDK_PATH
-local JAR
-local JDT_CONFIG
+local system = vim.uv.os_uname().sysname
 
 local jdtls = require 'jdtls'
 
@@ -17,35 +11,22 @@ local root_dir = jdtls.setup.find_root(root_markers)
 -- with multiple different projects, each project must use a dedicated data directory.
 -- This variable is used to configure eclipse to use the directory name of the
 -- current project found using the root_marker as the folder for project specific data.
+local jdtls_opts = {}
+local ok = false
+
 if system == 'Windows_NT' then
-  home = os.getenv 'UserProfile'
-  workspace_folder = home .. 'AppData/Local/Eclipse/' .. vim.fn.fnamemodify(root_dir, ':p:h:t')
-  bundles = {
-    vim.fn.glob(home .. '/AppData/Local/nvim-data/com.microsoft.java.debug.plugin-*.jar'),
-    vim.fn.glob(home .. '/AppData/Local/nvim-data/com.microsoft.jdtls.ext.core-*.jar')
-  }
-  JDK_PATH = 'C:/Program Files/'
-  JAR = vim.fn.glob(home .. '/AppData/Local/nvim-data/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar')
-  JDT_CONFIG = home .. '/AppData/Local/nvim-data/eclipse.jdt.ls/config_win'
-else
-  home = os.getenv 'HOME'
-  workspace_folder = home .. '/.eclipse/' .. vim.fn.fnamemodify(root_dir, ':p:h:t')
-  bundles = {
-    vim.fn.glob(home .. '/.local/share/nvim/com.microsoft.java.debug.plugin-*.jar'),
-    vim.fn.glob(home .. '/.local/share/nvim/com.microsoft.jdtls.ext.core-*.jar'),
-    vim.fn.glob(home .. '/.local/share/nvim/pde/*.jar')
-  }
-  JDK_PATH = '/usr/lib/jvm/openjdk/21.0.1'
-  JAR = vim.fn.glob(home .. '/.local/share/nvim/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar')
-  JDT_CONFIG = home .. '/.local/share/nvim/eclipse.jdt.ls/config_linux'
+  ok, jdtls_opts = pcall(require, 'servers.java.windows')
+end
+if system == 'Linux' then
+  ok, jdtls_opts = pcall(require, 'servers.java.linux')
+end
+if system == 'Darwin' then
+  ok, jdtls_opts = pcall(require, 'servers.java.macos')
 end
 
--- if on MacOS, using homebrew to install JDK
-if system == 'Darwin' then
-  -- JDK_PATH = '/usr/local/Cellar/openjdk/21.0.1/bin/java'
-  JAR = vim.fn.glob(home .. '/.local/share/nvim/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar')
-  JDK_PATH = '/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk/Contents/Home/bin/java'
-  JDT_CONFIG = home .. '/.local/share/nvim/eclipse.jdt.ls/config_mac'
+if not ok then
+  vim.notify('Jdtls options not found for ' .. system .. ': ' .. jdtls_opts)
+  return
 end
 
 -- Helper function for creating keymaps
@@ -60,8 +41,8 @@ local on_attach = function(client, bufnr)
   -- Regular Neovim LSP client keymappings
   local bufopts = { noremap = true, silent = true, buffer = bufnr }
   nnoremap('gD', vim.lsp.buf.declaration, bufopts, 'Go to declaration')
-  nnoremap('gd', vim.lsp.buf.definition, bufopts, 'Go to definition')
-  nnoremap('gi', vim.lsp.buf.implementation, bufopts, 'Go to implementation')
+  nnoremap('gd', require('telescope.builtin').lsp_definitions, bufopts, 'Go to definition')
+  nnoremap('gi', require('telescope.builtin').lsp_implementations, bufopts, 'Go to implementation')
   nnoremap('K', vim.lsp.buf.hover, bufopts, 'Hover text')
   nnoremap('<C-k>', vim.lsp.buf.signature_help, bufopts, 'Show signature')
   nnoremap('<space>wa', vim.lsp.buf.add_workspace_folder, bufopts, 'Add workspace folder')
@@ -70,6 +51,8 @@ local on_attach = function(client, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, bufopts, 'List workspace folders')
   nnoremap('<space>D', vim.lsp.buf.type_definition, bufopts, 'Go to type definition')
+  nnoremap('<leader>ds', require('telescope.builtin').lsp_document_symbols, bufopts, '[D]ocument [S]ymbols')
+  nnoremap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, bufopts, '[W]orkspace [S]ymbols')
   nnoremap('<space>rn', vim.lsp.buf.rename, bufopts, 'Rename')
   nnoremap('<space>ca', vim.lsp.buf.code_action, bufopts, 'Code actions')
   vim.keymap.set(
@@ -81,10 +64,9 @@ local on_attach = function(client, bufnr)
   nnoremap('<space>f', function()
     vim.lsp.buf.format { async = true }
   end, bufopts, 'Format file')
-  nnoremap('<leader>pcs', require('telescope.builtin').lsp_dynamic_workspace_symbols, bufopts, 'Search for workspace symbols')
 
   -- Java extensions provided by jdtls
-  nnoremap('<C-o>', jdtls.organize_imports, bufopts, 'Organize imports')
+  nnoremap('<leader>O', jdtls.organize_imports, bufopts, 'Organize imports')
   nnoremap('<space>ev', jdtls.extract_variable, bufopts, 'Extract variable')
   nnoremap('<space>ec', jdtls.extract_constant, bufopts, 'Extract constant')
   vim.keymap.set(
@@ -93,8 +75,7 @@ local on_attach = function(client, bufnr)
     [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
     { noremap = true, silent = true, buffer = bufnr, desc = 'Extract method' }
   )
-  require('jdtls').setup_dap { hotcodereplace = 'auto' }
-  jdtls.setup.add_commands()
+  jdtls.setup_dap { hotcodereplace = 'auto' }
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -112,7 +93,7 @@ local config = {
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
   init_options = {
-    bundles = bundles,
+    bundles = jdtls_opts.bundles,
   },
   settings = {
     java = {
@@ -168,22 +149,7 @@ local config = {
       -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
       -- And search for `interface RuntimeOption`
       -- The `name` is NOT arbitrary, but must match one of the elements from `enum ExecutionEnvironment` in the link above
-      configuration = {
-        runtimes = {
-          -- {
-          --   name = "JavaSE-11",
-          --   path = "C:/Program Files/Amazon Corretto/jdk11.0.18_10",
-          -- },
-          {
-            name = "JavaSE-11",
-            path = "/usr/local/opt/openjdk@11/libexec/openjdk.jdk/Contents/Home",
-          },
-          {
-            name = 'JavaSE-21',
-            path = '/usr/local/Cellar/openjdk/21.0.1',
-          },
-        },
-      },
+      configuration = jdtls_opts.runtimes,
     },
   },
   -- cmd is the command that starts the language server. Whatever is placed
@@ -192,7 +158,7 @@ local config = {
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   -- for the full list of options
   cmd = {
-    JDK_PATH,
+    jdtls_opts.JDK_PATH,
     '-Declipse.application=org.eclipse.jdt.ls.core.id1',
     '-Dosgi.bundles.defaultStartLevel=4',
     '-Declipse.product=org.eclipse.jdt.ls.core.product',
@@ -209,16 +175,16 @@ local config = {
     -- The jar file is located where jdtls was installed. This will need to be updated
     -- to the location where you installed jdtls
     '-jar',
-    JAR,
+    jdtls_opts.JAR,
 
     -- The configuration for jdtls is also placed where jdtls was installed. This will
     -- need to be updated depending on your environment
     '-configuration',
-    JDT_CONFIG,
+    jdtls_opts.JDT_CONFIG,
 
     -- Use the workspace_folder defined above to store data for this project
     '-data',
-    workspace_folder,
+    jdtls_opts.workspace_folder .. vim.fn.fnamemodify(root_dir, ':p:h:t'),
   },
 }
 
@@ -298,7 +264,7 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   formatting = {
-    fields = { "kind", "abbr", "menu" },
+    fields = { 'kind', 'abbr', 'menu' },
     expandable_indicator = true,
     format = lspkind.cmp_format {
       mode = 'symbol_text',
