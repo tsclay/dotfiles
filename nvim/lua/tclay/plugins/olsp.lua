@@ -62,7 +62,7 @@ local servers = {
   docker_compose_language_service = {},
   lua_ls = require 'servers.lua_ls',
   pyright = require 'servers.pyright',
-  tsserver = require 'servers.tsserver',
+  ts_ls = require 'servers.ts_ls',
   powershell_es = require 'servers.powershell_es',
 }
 
