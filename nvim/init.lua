@@ -1,12 +1,16 @@
-local cdpwd = vim.api.nvim_create_augroup('cdpwd', { clear = true})
+local cdpwd = vim.api.nvim_create_augroup('cdpwd', { clear = true })
 vim.api.nvim_create_autocmd('VimEnter', {
   group = cdpwd,
-  callback = function (data)
-    local dir = string.match(data.file, "^[a-z]+://(.+)$")
-    if dir ~= nil then
-      vim.api.nvim_set_current_dir(dir)
+  callback = function(data)
+    local dir = string.match(data.file, '^[a-z]+://(.+)$') or data.file
+    if dir == nil then
+      return
     end
-  end
+    if vim.fn.isdirectory(dir) == 0 then
+      dir = vim.fn.fnamemodify(dir, ':h')
+    end
+    vim.api.nvim_set_current_dir(dir)
+  end,
 })
 
 vim.g.loaded_netrw = 1

@@ -1,5 +1,3 @@
-local system = vim.loop.os_uname().sysname
-
 vim.opt.guicursor = ''
 
 vim.opt.nu = true
@@ -18,7 +16,7 @@ vim.env.PRETTIERD_DEFAULT_CONFIG = vim.fn.expand '~/.config/nvim/utils/linter-co
 vim.opt.swapfile = false
 vim.opt.backup = false
 
-if system == 'Windows_NT' then
+if vim.fn.has('win32') == 1 then
   vim.opt.undodir = os.getenv 'UserProfile' .. '/.vim/undodir'
 else
   vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
@@ -102,4 +100,28 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
 
 vim.diagnostic.config {
   float = { border = _border },
+}
+
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  underline = true,
+  update_in_insert = false,
+  virtual_text = { spacing = 4, prefix = '\u{ea71}' },
+  severity_sort = true,
+})
+
+-- Diagnostic symbols in the sign column (gutter)
+local signs = { Error = ' ', Warn = ' ', Hint = '', Info = ' ' }
+for type, icon in pairs(signs) do
+  local hl = 'DiagnosticSign' .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
+end
+
+vim.diagnostic.config {
+  virtual_text = {
+    prefix = '●',
+  },
+  update_in_insert = true,
+  float = {
+    source = 'if_many', -- Or "if_many"
+  },
 }

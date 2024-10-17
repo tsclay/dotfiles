@@ -47,17 +47,20 @@ function M.get_python_path()
     '.git',
   }
   local workspace = M.get_root(root_files)
-  local path = require('lspconfig.util').path
-
+  local join = function(...)
+    return table.concat(vim.tbl_flatten { ... }, '/')
+  end
   -- Find and use virtualenv in workspace directory.
   for _, pattern in ipairs { '*', '.*' } do
-    local match = vim.fn.glob(path.join(workspace:gsub('[/\\]$', ''), pattern, 'pyvenv.cfg'))
-    -- print(match)
+    local match = vim.fn.glob(join(workspace:gsub('[/\\]$', ''), pattern, 'pyvenv.cfg'))
+    -- print('the match ', match)
     if match ~= '' then
       if vim.fn.has 'win32' == 1 then
         return M.dirname(match) .. 'Scripts' .. '/python.exe'
       else
-        return path.join(M.dirname(match), 'bin', 'python')
+        -- print('baddaboom ', M.dirname(match) .. 'bin' .. '/python')
+        -- return join(M.dirname(match), 'bin', 'python')
+        return M.dirname(match) .. 'bin' .. '/python'
       end
     end
   end
@@ -66,9 +69,9 @@ function M.get_python_path()
   if vim.env.VIRTUAL_ENV then
     -- print 'Using virtualenv that was sourced'
     if vim.fn.has 'win32' == 1 then
-      return path.join(vim.env.VIRTUAL_ENV, 'Scripts', 'python.exe')
+      return vim.env.VIRTUAL_ENV .. 'Scripts' .. '/python.exe'
     else
-      return path.join(vim.env.VIRTUAL_ENV, 'bin', 'python')
+      return vim.env.VIRTUAL_ENV .. 'bin' .. '/python'
     end
   end
 
@@ -76,6 +79,7 @@ function M.get_python_path()
   if vim.fn.has 'win32' == 1 then
     return vim.fn.exepath 'python.exe'
   else
+    -- print('we returning the default python')
     return vim.fn.exepath 'python3'
   end
 end
